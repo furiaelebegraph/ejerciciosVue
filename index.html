@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Potato</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+	<div id="trompo">
+		<h1>Potato</h1>
+		<p v-text='mensaje'></p>
+		<h3 v-html='cosas'>  </h3>
+		<p v-show='mirado'> Lolo </p>
+		<p v-if='simirado === tambienmirado'> No, pos si esta mirado </p>
+		<p v-else > No pos no lo mirastes</p>
+		<p v-cloak>  Se encarga esconder los {{}} cuando apenas esta cargando y colocar otra cosa en su lugar </p>
+		<p :title='potato'> {{mensaje}} </p>
+		<img :src='superliga' :alt='potato' :title="potato">
+
+		<div  class="row">
+			<div v-for='todo in todos' class="col-12">
+				{{ todo.id }} )
+				{{todo.texto}}
+				
+			</div>
+		</div>
+
+		<div class="row">
+			<p v-bind:title='potato'> {{potato}} </p>
+			<input v-model='potato' type="text">
+		</div>
+		<div class="row">
+			<p> Veces picado: {{count}} </p>
+			<button @click='picar' class="btn btn-primary">
+				Picale
+			</button>
+			<button @click='bajar' class="btn btn-primary">
+				Bajale
+			</button>
+		</div>
+
+		<div class="row">
+			<div class="col-12">
+				Visita <a :href="url"> {{urlLimpia}} </a>
+			</div>
+			<div class="col-12">
+				<input v-model='url' type="text" class="form-control">
+				<button @click='cambiarUrl' class='btn btn-primary'> Pusheale </button>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<h2>Hola!, {{nombreCompleto}}</h2>
+					</div>
+					<div class="col-12">
+						Nombre: {{nombre}}
+						Apellido: {{apellido}}
+					</div>
+					<div class="col-6">
+						<label for="nombre"></label>
+						<input v-model='nombre' class='fomr-control' type="text">
+					</div>
+					<div class="col-6">
+						<label for="apellido"></label>
+						<input v-model='apellido' class='fomr-control' type="text">
+					</div>
+
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				Tu nivel es: {{nivel}}
+			</div>
+			<div class="col-12">
+				EXP Total: {{expTotal}}
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div  class="col-4">
+						<button @click='subirNivel'> Agregar Exp + </button>
+					</div>
+					<div class="col-4">
+						<button @click='bajarNivel'> Quitar Exp + </button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				Super AJAXa con AXIOS y asi
+			</div>
+		</div>
+	</div>
+	<div id="mrpotato">
+		<div class="row justify-content-center">
+			<div class="col-12">
+				<div class="row align-items-center justify-content-center">
+					<div class="col-5">
+						<input v-model='cpInicio' type="text">
+						<span > {{cpInicio}} </span>
+						<div > {{turrunoInicial}} </div>
+					</div>
+					<div class="col-5">
+						<input v-model='cpFinal' type="text">
+						<span > {{cpFinal}} </span>
+						<div > {{turrunoFinal}} </div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src='https://unpkg.com/vue@2.5.16/dist/vue.js' ></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/lodash@4.17.10/lodash.min.js" ></script>
+
+<script>
+	let cpApi =new Vue({
+		el: '#mrpotato',
+		data:{
+			cpInicio:'',
+			cpFinal:'',
+			turrunoInicial: '',
+			turrunoFinal: ''
+
+		},
+		watch:{
+			cpInicio: function(){
+				this.turrunoInicial =''
+				if(this.cpInicio.length == 5){
+					this.buscarCiudadInicio()
+				} 
+			}
+		},
+		methods:{
+			buscarCiudadInicio: _.debounce(function(){
+				let potato = this
+				potato.turrunoInicial = 'Buscando Terruno...'
+				let datos = axios.get('https://api-codigos-postales.herokuapp.com/v2/codigo_postal/'+potato.cpInicio ).then(function(response){
+						potato.turrunoInicial = response.data.colonias+ ' ' +response.data.municipio +', '+ response.data.estado
+					})
+			}, 500)
+		}
+	});
+	let nuevo = new Vue({
+		el: '#trompo',
+		data: {
+			count: 1,
+			mensaje: 'Holis Camarounis',
+			cosas: 'XML <strong> UPDATE </strong>',
+			mirado: false,
+			simirado: true,
+			tambienmirado: true,
+			potato: 'Nombre de la magen',
+			superliga: 'https://vuejs.org/images/logo.png',
+			todos:[
+				{ texto: 'Cosa 1', id: 1 },
+				{ texto: 'Cosa 2', id: 2},
+				{ texto: 'Cosa 3', id: 3},
+				{ texto: 'Cosa 4', id: 4},
+			],
+			url: '',
+			urlLimpia: '',
+			nombre: '',
+			apellido: '',
+			expTotal: 10,
+
+		},
+		methods: {
+			picar: function(){
+				this.count += 2
+			},
+			bajar: function(){
+				this.count -= 2
+			},
+			cambiarUrl: function(){
+				this.urlLimpia = this.url.replace(/^https?:\/\//,'').replace(/\/$/,'');
+			},
+			subirNivel: function(){
+				this.expTotal += 10 
+			},
+			bajarNivel: function(){
+				this.expTotal -= 10 
+			}
+		},
+		computed: {
+			nombreCompleto: function(){
+				return  this.nombre+' '+this.apellido
+			},
+			nivel: function(){
+				if( this.expTotal >= 200 ){
+					return 'Mr Pro'
+				}else if( this.expTotal >= 100 ){
+					return 'Mr Jr'
+				}else if( this.expTotal >= 0 ){
+					return 'Mr Noob'
+				}else{
+					return 'Mr Potato'
+				}
+			}
+		}
+	});
+</script>
+</html>
